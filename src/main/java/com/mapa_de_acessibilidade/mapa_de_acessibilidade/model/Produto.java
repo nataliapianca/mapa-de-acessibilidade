@@ -5,9 +5,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+// entidade Produto
 @Entity
 public class Produto {
-
+// id sendo gerado automaticamente pelo spring ao ser repassado para o banco (o spring gera querys automaticamente)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
