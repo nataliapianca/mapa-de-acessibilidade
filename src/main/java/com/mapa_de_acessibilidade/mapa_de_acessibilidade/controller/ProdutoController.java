@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.model.Produto;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.service.ProdutoService;
 
+// controlador Produto que lida com as requisições HTTP relacionadas aos produtos EM JSON.
 @RestController
 @RequestMapping("/produtos")
-@CrossOrigin(origins = "*") // Permite o front acessar o back
+@CrossOrigin(origins = "*") // Permite o front acessar o back, libera acesso para qualquer domínio!
 public class ProdutoController {
 
     private final ProdutoService produtoService;
@@ -29,35 +30,64 @@ public class ProdutoController {
         this.produtoService = produtoService;
     }
 
+    // Endpoint adicionar produto
     @PostMapping
     public ResponseEntity<Produto> criar(@RequestBody Produto produto) {
         Produto novo = produtoService.salvar(produto);
-        return new ResponseEntity<>(novo, HttpStatus.CREATED);
+
+        if (novo == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(novo);
     }
 
+    // Endpoint listar todos os produtos
     @GetMapping
     public ResponseEntity<List<Produto>> listarTodos() {
-        return ResponseEntity.ok(produtoService.listarTodos());
+        List<Produto> produtos = produtoService.listarTodos();
+
+        if (produtos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(produtos);
     }
 
+    // Endpoint buscar produto por ID
     @GetMapping("/{id}")
     public ResponseEntity<Produto> buscarPorId(@PathVariable Long id) {
         Optional<Produto> produto = produtoService.buscarPorId(id);
-        return produto.map(ResponseEntity::ok)
-                      .orElseGet(() -> ResponseEntity.notFound().build());
+
+        if (produto.isPresent()) {
+            return ResponseEntity.ok(produto.get());
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
+    // Endpoint atualizar produto
     @PutMapping("/{id}")
     public ResponseEntity<Produto> atualizar(@PathVariable Long id, @RequestBody Produto produto) {
         Produto atualizado = produtoService.atualizar(id, produto);
-        return (atualizado != null)
-                ? ResponseEntity.ok(atualizado)
-                : ResponseEntity.notFound().build();
+
+        if (atualizado == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(atualizado);
     }
 
+    // Endpoint deletar produto, que não está sendo usado no front mas pode ser testado via postman
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         boolean removido = produtoService.deletar(id);
-        return removido ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+
+        if (!removido) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.noContent().build();
     }
+
 }
