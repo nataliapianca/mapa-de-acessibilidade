@@ -1,36 +1,58 @@
 package com.mapa_de_acessibilidade.mapa_de_acessibilidade.service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.mapa_de_acessibilidade.mapa_de_acessibilidade.client.NominatimClient;
+import com.mapa_de_acessibilidade.mapa_de_acessibilidade.client.dto.NominatimResponse;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.model.Local;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.model.LocalTag;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.model.TagAcessibilidade;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.repository.LocalRepository;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.repository.TagAcessibilidadeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class LocalService {
 
     private final LocalRepository localRepository;
     private final TagAcessibilidadeRepository tagRepository;
+    private final NominatimClient nominatimClient;
 
   
     @Autowired
-    public LocalService(LocalRepository localRepository, TagAcessibilidadeRepository tagRepository) {
+    public LocalService(LocalRepository localRepository, TagAcessibilidadeRepository tagRepository, NominatimClient nominatimClient) {
         this.localRepository = localRepository;
         this.tagRepository = tagRepository;
+        this.nominatimClient = nominatimClient;
     }
 
-    // 1. C (CREATE/UPDATE) - Salvar ou Atualizar Local
+
+    
+    /**
+     * @param local
+     * @param idsTags
+     * @return
+     */
     // @Transactional garante que a operação de banco será atômica
     @Transactional
     public Local salvarLocal(Local local, Set<Long> idsTags) {
+
+        Optional<NominatimResponse> coordenadas = nominatimClient.buscarCoordenadas(local.getEndereco());
+        if (coordenadas.isPresent()) {
+            local.setLatitude(coordenadas.get().getLatitude());
+            local.setLongitude(coordenadas.get().getLongitude());
+        } else {
+            local.setLatitude(0.0);
+            local.setLongitude(0.0);
+            System.err.print("Aviso: Endereço não geocodificado.");
+        }
+
         Set<TagAcessibilidade> tagsExistentes = new HashSet<>(tagRepository.findAllById(idsTags));
         
         // Verifica se todas as tags solicitadas foram encontradas
@@ -38,7 +60,7 @@ public class LocalService {
             System.err.println("Aviso: Algumas Tags informadas não foram encontradas no banco de dados.");
         }
 
-        // Criar o conjunto de LocalTag
+       
         Set<LocalTag> novoRelacionamentoTags = new HashSet<>();
         
         // Atribui a cada LocalTag o Local e a Tag, inicializando o score em 0.0
@@ -60,20 +82,19 @@ public class LocalService {
         return localRepository.save(local);
     }
     
-    // 2. R (READ) - Buscar Todos
+   
     public List<Local> buscarTodos() {
         return localRepository.findAll();
     }
     
-    // 3. R (READ) - Buscar por ID
+    
     public Optional<Local> buscarPorId(Long id) {
         return localRepository.findById(id);
     }
     
-    // 4. U (UPDATE) - Atualizar (versão mais simples - pode ser mais complexa)
+   
     @Transactional
     public Local atualizarLocal(Long id, Local detalhesLocal, Set<Long> idsTags) {
-        // Encontrar o local existente
         return localRepository.findById(id).map(localExistente -> {
             
          
@@ -86,12 +107,12 @@ public class LocalService {
             // Lógica de tags: Reutiliza o método salvarLocal, mas é mais seguro
             // criar uma lógica separada para atualização de tags
             
-            // Simplesmente reutilizando a lógica de criação de tags:
+           
             return salvarLocal(localExistente, idsTags);
         }).orElseThrow(() -> new RuntimeException("Local não encontrado com ID: " + id));
     }
     
-    // 5. D (DELETE) - Deletar
+   
     public void deletarLocal(Long id) {
         localRepository.deleteById(id);
     }

@@ -34,7 +34,7 @@ public class LocalTag implements Serializable{
     // Será atualizado pelo Service de Comentário (BE4), 
     // mas persistido por você (BE1)
     @Column(name = "confianca_score", nullable = false)
-    private Double confiancaScore = 0.0; // Inicia com 100% de confiança (Primeira inserção)
+    private Double confiancaScore = 0.0; // Inicia com 0% de confiança (Primeira inserção)
 
 
     // Construtores, Getters e Setters (devem ser implementados)
