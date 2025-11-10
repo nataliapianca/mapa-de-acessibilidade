@@ -26,11 +26,11 @@ public class ComentarioUsuario implements Serializable{
     private Long id;
     private String texto;
     private Integer nota;
-    private String usuario;
-
-
+  
+    @ManyToOne
+    private Pessoa usuario;
+    
     private LocalDateTime dataCriacao = LocalDateTime.now();
-
 
     @ManyToOne
     private Local local;
@@ -41,6 +41,9 @@ public class ComentarioUsuario implements Serializable{
         joinColumns = @JoinColumn(name = "comentario_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+    
+  
+    
     private Set<TagAcessibilidade> tagsComentadas = new HashSet<>();
 
 
@@ -79,12 +82,11 @@ public class ComentarioUsuario implements Serializable{
     }
 
 
-    public String getUsuario() {
+    public Pessoa getUsuario() {
         return usuario;
     }
 
-
-    public void setUsuario(String usuario) {
+    public void setUsuario(Pessoa usuario) {
         this.usuario = usuario;
     }
 
