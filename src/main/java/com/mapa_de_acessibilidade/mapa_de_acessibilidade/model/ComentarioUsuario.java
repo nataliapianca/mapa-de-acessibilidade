@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,16 +25,24 @@ public class ComentarioUsuario implements Serializable{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
-    private String texto;
+    
+    @Column(name = "descricao", nullable = false, columnDefinition = "TEXT")
+    private String descricao;
+    
+    @Column(name = "nota", nullable = false)
     private Integer nota;
   
     @ManyToOne
-    private Pessoa usuario;
+    @JoinColumn(name = "pessoa_id", nullable = false)
+    private Pessoa pessoa;
     
+    @Column(name = "data_criacao", nullable = false)
     private LocalDateTime dataCriacao = LocalDateTime.now();
 
     @ManyToOne
+    @JoinColumn(name = "local_id", nullable = false)
     private Local local;
    
     @ManyToMany
@@ -41,84 +51,101 @@ public class ComentarioUsuario implements Serializable{
         joinColumns = @JoinColumn(name = "comentario_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+    private Set<TagAcessibilidade> tagsComentadas = new HashSet<>();
     
   
-    
-    private Set<TagAcessibilidade> tagsComentadas = new HashSet<>();
-
-
     public ComentarioUsuario(){
 
     }
 
 
-    public Long getId() {
-        return id;
-    }
+	public ComentarioUsuario(Long id, String descricao, Integer nota, Pessoa pessoa, LocalDateTime dataCriacao,
+			Local local, Set<TagAcessibilidade> tagsComentadas) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+		this.nota = nota;
+		this.pessoa = pessoa;
+		this.dataCriacao = dataCriacao;
+		this.local = local;
+		this.tagsComentadas = tagsComentadas;
+	}
 
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getId() {
+		return id;
+	}
 
 
-    public String getTexto() {
-        return texto;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 
-    public void setTexto(String texto) {
-        this.texto = texto;
-    }
+	public String getDescricao() {
+		return descricao;
+	}
 
 
-    public Integer getNota() {
-        return nota;
-    }
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
 
 
-    public void setNota(Integer nota) {
-        this.nota = nota;
-    }
+	public Integer getNota() {
+		return nota;
+	}
 
 
-    public Pessoa getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Pessoa usuario) {
-        this.usuario = usuario;
-    }
+	public void setNota(Integer nota) {
+		this.nota = nota;
+	}
 
 
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
+	public Pessoa getPessoa() {
+		return pessoa;
+	}
 
 
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
-    }
+	public void setPessoa(Pessoa pessoa) {
+		this.pessoa = pessoa;
+	}
 
 
-    public Local getLocal() {
-        return local;
-    }
+	public LocalDateTime getDataCriacao() {
+		return dataCriacao;
+	}
 
 
-    public void setLocal(Local local) {
-        this.local = local;
-    }
+	public void setDataCriacao(LocalDateTime dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
 
 
-    public Set<TagAcessibilidade> getTagsComentadas() {
-        return tagsComentadas;
-    }
+	public Local getLocal() {
+		return local;
+	}
 
 
-    public void setTagsComentadas(Set<TagAcessibilidade> tagsComentadas) {
-        this.tagsComentadas = tagsComentadas;
-    }
+	public void setLocal(Local local) {
+		this.local = local;
+	}
+
+
+	public Set<TagAcessibilidade> getTagsComentadas() {
+		return tagsComentadas;
+	}
+
+
+	public void setTagsComentadas(Set<TagAcessibilidade> tagsComentadas) {
+		this.tagsComentadas = tagsComentadas;
+	}
+
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 
 
 }
