@@ -1,0 +1,98 @@
+## script uml do diagrama de banco ##
+
+@startuml
+
+' Definição das Classes/Tabelas e Seus Atributos
+class Pessoa {
+    + id: long <<PK>>
+    --
+    - nome: String
+    - email: String
+    - telefone: String
+    - login: String
+    - senha: int
+}
+
+class Proprietario {
+    + id: long <<PK, FK>>
+}
+
+class Usuario {
+    + id: long <<PK, FK>>
+}
+
+class TagAcessibilidade {
+    + tagId: long <<PK>>
+    --
+    - nome: String
+}
+
+class Local {
+    + id: long <<PK>>
+    + proprietarioId: long <<FK>>
+    --
+    - nome: String
+    - descricao: String
+    - endereco: String
+    - latitude: double
+    - longitude: double
+}
+
+class Acessibilidade {
+    + localId: long <<PK, FK>>
+    --
+    - Acessivel: boolean
+}
+
+class LocalTagId {
+    + localId: long <<PK, FK>>
+    + tagId: long <<PK, FK>>
+}
+
+class LocalTag {
+    + id: LocalTagId
+    + tagId <<PK, FK>>
+    + localId <<PK, FK>>
+    --
+    - confiancaScore: double
+}
+
+class Comentario {
+    + id: long <<PK>>
+    + usuarioId: long <<FK>>
+    + localId: long <<FK>>
+    --
+    - descricao: String
+}
+
+' ---------------------------------
+' Relações de Herança/Especialização
+' ---------------------------------
+Pessoa <|-- Proprietario
+Pessoa <|-- Usuario
+
+' ---------------------------------
+' Relações de Associação/Chaves Estrangeiras
+' ---------------------------------
+
+' 1. Proprietario administra Local (1:N)
+Proprietario "1" -- "0..*" Local
+
+' 2. Local e Acessibilidade (1:1 com Chave Compartilhada)
+Local "1" -- "1" Acessibilidade
+
+' 3. Usuário faz Comentário (1:N)
+Usuario "1" -- "0..*" Comentario
+
+' 4. Local e Comentário (1:N)
+Local "1" -- "0..*" Comentario 
+
+' 5. LocalTag é a tabela N:M entre Local e TagAcessibilidade
+' LocalTag é composto por LocalTagId (Chave Composta)
+LocalTag "1" -- "1" LocalTagId
+
+' LocalTag é o detalhe da relação N:M
+Local "1" -- "0..*" LocalTag
+TagAcessibilidade "1" -- "0..*" LocalTag
+
+@enduml
