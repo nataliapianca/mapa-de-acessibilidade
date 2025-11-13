@@ -14,23 +14,27 @@ import com.mapa_de_acessibilidade.mapa_de_acessibilidade.client.dto.NominatimRes
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.model.Local;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.model.LocalTag;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.model.TagAcessibilidade;
+import com.mapa_de_acessibilidade.mapa_de_acessibilidade.model.Proprietario;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.repository.LocalRepository;
+import com.mapa_de_acessibilidade.mapa_de_acessibilidade.repository.ProprietarioRepository;
 import com.mapa_de_acessibilidade.mapa_de_acessibilidade.repository.TagAcessibilidadeRepository;
 
 @Service
 public class LocalService {
 
-	private final LocalRepository localRepository;
-	private final TagAcessibilidadeRepository tagRepository;
-	private final NominatimClient nominatimClient;
+		private final LocalRepository localRepository;
+		private final TagAcessibilidadeRepository tagRepository;
+		private final NominatimClient nominatimClient;
+		private final ProprietarioRepository proprietarioRepository;
 
-	@Autowired
-	public LocalService(LocalRepository localRepository, TagAcessibilidadeRepository tagRepository,
-			NominatimClient nominatimClient) {
-		this.localRepository = localRepository;
-		this.tagRepository = tagRepository;
-		this.nominatimClient = nominatimClient;
-	}
+		@Autowired
+		public LocalService(LocalRepository localRepository, TagAcessibilidadeRepository tagRepository,
+				NominatimClient nominatimClient, ProprietarioRepository proprietarioRepository) {
+			this.localRepository = localRepository;
+			this.tagRepository = tagRepository;
+			this.nominatimClient = nominatimClient;
+			this.proprietarioRepository = proprietarioRepository;
+		}
 
 	/**
 	 * @param local
@@ -39,7 +43,10 @@ public class LocalService {
 	 */
 	// @Transactional garante que a operação de banco será atômica
 	@Transactional
-	public Local salvarLocal(Local local, Set<Long> idsTags) {
+		public Local salvarLocal(Local local, Set<Long> idsTags, Long proprietarioId) {
+			Proprietario proprietario = proprietarioRepository.findById(proprietarioId)
+					.orElseThrow(() -> new RuntimeException("Proprietário não encontrado com ID: " + proprietarioId));
+			local.setProprietario(proprietario);
 
 		Optional<NominatimResponse> coordenadas = nominatimClient.buscarCoordenadas(local.getEndereco());
 		if (coordenadas.isPresent()) {
@@ -100,9 +107,10 @@ public class LocalService {
 			localExistente.setLongitude(detalhesLocal.getLongitude());
 
 			// Lógica de tags: Reutiliza o método salvarLocal, mas é mais seguro
-			// criar uma lógica separada para atualização de tags
-
-			return salvarLocal(localExistente, idsTags);
+				// criar uma lógica separada para atualização de tags
+	
+				// Reutiliza o método salvarLocal, passando o ID do proprietário existente
+				return salvarLocal(localExistente, idsTags, localExistente.getProprietario().getId());
 		}).orElseThrow(() -> new RuntimeException("Local não encontrado com ID: " + id));
 	}
 
