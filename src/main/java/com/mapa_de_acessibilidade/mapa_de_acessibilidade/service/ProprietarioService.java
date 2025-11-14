@@ -36,14 +36,14 @@ public class ProprietarioService {
     
     @Transactional
     public Proprietario salvarProprietario(Proprietario proprietario) {
-        // A validação de email/login único é feita no PessoaService
+      
         return (Proprietario) pessoaService.salvarPessoa(proprietario);
     }
 
     
     @Transactional
     public Proprietario atualizarProprietario(Long id, Proprietario detalhesProprietario) {
-        // A validação de email/login único é feita no PessoaService
+      
         return (Proprietario) pessoaService.atualizarPessoa(id, detalhesProprietario);
     }
 
