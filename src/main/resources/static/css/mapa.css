@@ -1,0 +1,195 @@
+/* === MAPA === */
+#mapa {
+  height: 100vh;
+  width: 100%;
+  /* Garante que os botões não afetem o mapa */
+  z-index: 1;
+}
+
+/* === CONTÊINER DOS BOTÕES DE AÇÃO === */
+.map-actions {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000; /* Garante que os botões fiquem acima do mapa */
+  display: flex;
+  gap: 10px;
+}
+
+/* === ESTILO GERAL DOS BOTÕES NO MAPA === */
+.btn-mapa {
+  background-color: #2d6a4f; /* Verde escuro */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-mapa:hover,
+.btn-mapa:focus {
+  background-color: #1b4332;
+  transform: scale(1.05);
+}
+
+/* Botão de Configuração (antigo .btn-entrar) */
+.btn-config {
+  background-color: #52796f; /* Um verde um pouco mais claro */
+}
+
+/* === MODAL DE NOVO LOCAL === */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  
+  /* Esconde o modal por padrão */
+  display: none; 
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+  color: #1b4332;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.btn-fechar {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+}
+.btn-fechar:hover {
+  color: #333;
+}
+
+/* === ESTILOS DO FORMULÁRIO === */
+#form-novo-local {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+}
+
+.form-group small {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.tag-option {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tag-checkbox {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.btn-salvar {
+  background-color: #2d6a4f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-salvar:hover {
+  background-color: #1b4332;
+}
+
+
+/* === VERSÃO MOBILE === */
+@media (max-width: 600px) {
+  .map-actions {
+    flex-direction: column-reverse;
+    top: 10px;
+    right: 10px;
+  }
+  .btn-mapa {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+  .modal-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+  .modal-header {
+    padding: 15px 20px;
+  }
+  .modal-header h2 {
+    font-size: 1.2rem;
+  }
+}

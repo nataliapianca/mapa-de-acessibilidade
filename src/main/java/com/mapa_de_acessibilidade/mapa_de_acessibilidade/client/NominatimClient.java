@@ -19,16 +19,15 @@ import com.mapa_de_acessibilidade.mapa_de_acessibilidade.client.dto.NominatimRes
 @Component
 public class NominatimClient {
 
-   private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     public NominatimClient() {
         this.restTemplate = new RestTemplate();
-    
+
         // Configura o User-Agent
         HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "MapaDeAcessibilidadeApp/1.0"); 
+        headers.set("User-Agent", "MapaDeAcessibilidadeApp/1.0");
 
-        
         // Isso é uma exigência de boas práticas do Nominatim!
         headers.set("Referer", "http://localhost:8080/mapa-de-acessibilidade-api");
 
@@ -38,12 +37,13 @@ public class NominatimClient {
             request.getHeaders().addAll(headers);
             return execution.execute(request, body);
         };
-        
+
         // 2. Passa o Interceptor para o RestTemplate
         // Agora o compilador sabe exatamente o que está na lista.
-       restTemplate.setInterceptors(Collections.singletonList(interceptor));
+        restTemplate.setInterceptors(Collections.singletonList(interceptor));
 
-}
+    }
+
     // Injeta o valor do application.properties
     @Value("${nominatim.api.base-url}")
     private String nominatimBaseUrl;
@@ -55,36 +55,29 @@ public class NominatimClient {
      */
     public Optional<NominatimResponse> buscarCoordenadas(String endereco) {
 
-        try {
-            // 1. Codificação: Obriga o endereço a ser formatado para URL (ex: "Rua A" -> "Rua%20A")
-            String encodedAddress = URLEncoder.encode(endereco, StandardCharsets.UTF_8.toString());
+        // 1. Codificação: Obriga o endereço a ser formatado para URL (ex: "Rua A" ->
+        // "Rua%20A")
 
-            // 2. Montagem da URL: Query para buscar o endereço e pedir o retorno em JSON com apenas 1 resultado
-            String url = nominatimBaseUrl + "search?q=" + encodedAddress +
-                         "&format=json&limit=1";
+        // 2. Montagem da URL: Query para buscar o endereço e pedir o retorno em JSON
+        // com apenas 1 resultado
+        String url = nominatimBaseUrl + "search?q=" + endereco +
+                "&format=json&limit=1";
 
-            // 3. Execução: Faz a chamada GET e tenta mapear o array JSON para um array Java
-            NominatimResponse[] responses = restTemplate.getForObject(url, NominatimResponse[].class);
+        // 3. Execução: Faz a chamada GET e tenta mapear o array JSON para um array Java
+        NominatimResponse[] responses = restTemplate.getForObject(url, NominatimResponse[].class);
 
-            // Adicione este log para ver o que o RestTemplate recebeu:
-            System.out.println("DEBUG NOMINATIM: Array de resposta recebido. Tamanho: " + (responses != null ? responses.length : "null"));
+        // Adicione este log para ver o que o RestTemplate recebeu:
+        System.out.println("DEBUG NOMINATIM: Array de resposta recebido. Tamanho: "
+                + (responses != null ? responses.length : "null"));
 
-            // 4. Verificação: A API retorna um array vazio se não encontrar nada
-            if (responses != null && responses.length > 0) {
+        // 4. Verificação: A API retorna um array vazio se não encontrar nada
+        if (responses != null && responses.length > 0) {
             // Adicione esta linha:
-            System.out.println("SUCESSO NOMINATIM: Coordenadas encontradas para: " + endereco); 
+            System.out.println("SUCESSO NOMINATIM: Coordenadas encontradas para: " + endereco);
             return Optional.of(responses[0]);
-            }else {
+        } else {
             // Se o Nominatim retornou JSON vazio (não encontrou o endereço)
             System.err.println("AVISO NOMINATIM: Endereço não encontrado ou JSON vazio.");
-        }
-
-        } catch (UnsupportedEncodingException | RestClientException e) {
-            // Log de erro (útil para debugging)
-            System.err.println("== ERRO NO NOMINATIM - INÍCIO DO RASTREAMENTO ==");
-            System.err.println("Endereço problemático: " + endereco);
-            e.printStackTrace(); // <--- O COMANDO MÁGICO
-            System.err.println("== ERRO NO NOMINATIM - FIM DO RASTREAMENTO ==");
         }
 
         // Retorna Optional.empty() se não encontrou ou se houve erro

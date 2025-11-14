@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### senhas banco de dados ###
+src/main/resources/application.properties

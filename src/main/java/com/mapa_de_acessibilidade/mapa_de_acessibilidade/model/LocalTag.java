@@ -1,16 +1,16 @@
 package com.mapa_de_acessibilidade.mapa_de_acessibilidade.model;
 
 import java.io.Serializable;
-import java.util.Objects;
-
 import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+
+
+
 
 @Entity
 @Table(name = "local_tag")
@@ -80,55 +80,3 @@ public class LocalTag implements Serializable{
 }
 
 
-// Classe Auxiliar para a Chave Composta
-@Embeddable
-class LocalTagId implements Serializable {
-    @Column(name = "local_id")
-    private Long localId;
-
-    @Column(name = "tag_id")
-    private Long tagId;
-
-
-     // Construtores, equals() e hashCode() são obrigatórios
-    public LocalTagId(Long localId, Long tagId) {
-        this.localId = localId;
-        this.tagId = tagId;
-    }
-
-    public LocalTagId() {}
-
-
-   @Override
-    public int hashCode() {
-        return Objects.hash(localId, tagId);
-    } 
-
-
-   @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LocalTagId that = (LocalTagId) o;
-        return Objects.equals(localId, that.localId) &&
-               Objects.equals(tagId, that.tagId);
-    }
-
-
-    public Long getLocalId() {
-        return localId;
-    }
-    public void setLocalId(Long localId) {
-        this.localId = localId;
-    }
-
-    public Long getTagId() {
-        return tagId;
-    }
-    public void setTagId(Long tagId) {
-        this.tagId = tagId;
-    }
-
-
-    
-}

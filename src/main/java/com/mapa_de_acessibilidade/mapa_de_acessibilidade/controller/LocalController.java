@@ -14,6 +14,7 @@ import java.util.Set;
 @RestController
 // Mapeamento base para todos os endpoints deste controlador
 @RequestMapping("/api/locais") 
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class LocalController {
 
     private final LocalService localService;
@@ -64,7 +65,7 @@ public class LocalController {
                 // Se Optional tiver um valor (Local encontrado), retorna 200 OK
                 .map(local -> new ResponseEntity<>(local, HttpStatus.OK))
                 // Se Optional estiver vazio (Local não encontrado), retorna 404 Not Found
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElse(ResponseEntity.notFound().build());
     }
 
     /* ----------------------------------
