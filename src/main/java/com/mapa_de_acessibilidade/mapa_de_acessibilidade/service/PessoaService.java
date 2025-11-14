@@ -40,11 +40,7 @@ public class PessoaService {
         return pessoaRepository.findByLogin(login);
     }
 
-    /**
-     * Salva uma nova pessoa.
-     * @param pessoa A entidade Pessoa a ser salva.
-     * @return A entidade Pessoa salva.
-     */
+    
     @Transactional
     public Pessoa salvarPessoa(Pessoa pessoa) {
         if (pessoaRepository.existsByEmail(pessoa.getEmail())) {
@@ -57,12 +53,7 @@ public class PessoaService {
         return pessoaRepository.save(pessoa);
     }
 
-    /**
-     * Atualiza os dados de uma pessoa.
-     * @param id ID da pessoa a ser atualizada.
-     * @param detalhesPessoa Detalhes da pessoa para atualização.
-     * @return A entidade Pessoa atualizada.
-     */
+   
     @Transactional
     public Pessoa atualizarPessoa(Long id, Pessoa detalhesPessoa) {
         return pessoaRepository.findById(id).map(pessoaExistente -> {
