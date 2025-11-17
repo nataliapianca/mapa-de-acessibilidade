@@ -1,3 +1,4 @@
+-- Active: 1762864517303@@dbmapa-nhui.j.aivencloud.com@15697@acessibilidade_db
 -- Criação e Seleção do Banco de Dados
 CREATE DATABASE IF NOT EXISTS AcessibilidadeApp;
 USE AcessibilidadeApp;

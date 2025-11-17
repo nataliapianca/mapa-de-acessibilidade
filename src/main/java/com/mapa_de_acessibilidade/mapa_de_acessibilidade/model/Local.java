@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.Set;
@@ -31,6 +33,11 @@ public class Local {
     private double latitude; // Coordenadas para exibição
     private double longitude;
 
+    // Relacionamento com Proprietario
+    @ManyToOne
+    @JoinColumn(name = "proprietario_id", nullable = true)
+    private Proprietario proprietario;
+
     // NOVO RELACIONAMENTO
     // O Local agora tem um conjunto de associações LocalTag
     @OneToMany(mappedBy = "local", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,6 +55,16 @@ public class Local {
         this.latitude = latitude;
         this.longitude = longitude;
         this.tagsComScore = tagsComScore;
+    }
+
+    public Local(String nome, String descricao, String endereco, double latitude, double longitude,
+            Proprietario proprietario) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.endereco = endereco;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.proprietario = proprietario;
     }
 
 
@@ -99,6 +116,14 @@ public class Local {
     }
     public void setTagsComScore(Set<LocalTag> tagsComScore) {
         this.tagsComScore = tagsComScore;
+    }
+
+    public Proprietario getProprietario() {
+        return proprietario;
+    }
+
+    public void setProprietario(Proprietario proprietario) {
+        this.proprietario = proprietario;
     }
 
    
